@@ -1,0 +1,143 @@
+name: Release Donut Shop.
+
+on:
+  workflow_dispatch:
+    inputs:
+      name:
+        type: choice
+        description: Choose a type of release to build.
+        options:
+          - Minor
+          - Patch
+
+permissions: write-all
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout main and pull upstream master
+        uses: actions/checkout@v2
+        with:
+          ref: main
+
+      - name: Git Pull main branch
+        run: |
+          git fetch origin main
+          git checkout main
+          git pull origin main
+
+      - name: Create and checkout new branch
+        id: create_branch
+        run: |
+          branch_name="bump-$(date +'%m-%d-%Y-%H-%M-%S')-branch"
+          git checkout -b "$branch_name"
+          echo "::set-output name=branch_name::$branch_name"
+          git push --set-upstream origin "$branch_name"
+
+      - name: Install jq
+        run: sudo apt-get install jq
+
+      - name: Bump Version in package.json
+        id: bump_version_step
+        run: |
+          if [ "${{ github.event.inputs.name }}" == "Patch" ]; then
+            current_version=$(jq -r '.version' donnuts-shop/package.json)
+            patch_version=$(echo "$current_version" | cut -d. -f3)
+            new_patch_version=$((patch_version + 1))
+            new_version=$(echo "$current_version" | awk -F. -v OFS=. -v patch="$new_patch_version" '{$3=patch; print}')
+            jq --arg new_version "$new_version" '.version |= $new_version' donnuts-shop/package.json > temp.json && mv temp.json donnuts-shop/package.json
+            echo "::set-output name=version::$new_version"
+          else
+            current_version=$(jq -r '.version' donnuts-shop/package.json)
+            major_version=$(echo "$current_version" | cut -d. -f2)
+            new_version="1.$((major_version + 1)).0"
+            jq --arg new_version "$new_version" '.version |= $new_version' donnuts-shop/package.json > temp.json && mv temp.json donnuts-shop/package.json
+            echo "::set-output name=version::$new_version"
+          fi
+
+      - name: Update Changelog
+        run: |
+          version="${{ steps.bump_version_step.outputs.version }}"
+          sed -i "0,/\[Unreleased\]/s/\[Unreleased\]/[${version}]/2" CHANGELOG.md
+
+      - name: Commit Changes
+        run: |
+          git config --global user.email "senorTaquero@tacos.com"
+          git config --global user.name "Don Taquero"
+          git add donnuts-shop/package.json CHANGELOG.md
+          git commit -m "Bump version to ${{ steps.bump_version_step.outputs.version }}"
+
+      - name: Create tag
+        run: |
+          version="${{ steps.bump_version_step.outputs.version }}"
+          git tag -a "v-${version}" -m "Version ${version}"
+
+      - name: Push tag
+        run: |
+          version="${{ steps.bump_version_step.outputs.version }}"
+          git push origin "v-${version}"
+  
+      - name: Bump Version in package.json
+        id: bump_version_step_minor
+        run: |
+            if [ "${{ github.event.inputs.name }}" == "Patch" ]; then
+              current_version=$(jq -r '.version' donnuts-shop/package.json)
+              patch_version=$(echo "$current_version" | cut -d. -f3)
+              new_patch_version=$((patch_version + 1))-0
+              new_version=$(echo "$current_version" | awk -F. -v OFS=. -v patch="$new_patch_version" '{$3=patch; print}')
+              jq --arg new_version "$new_version" '.version |= $new_version' donnuts-shop/package.json > temp.json && mv temp.json donnuts-shop/package.json
+              echo "::set-output name=version::$new_version"
+            else
+              current_version=$(jq -r '.version' donnuts-shop/package.json)
+              patch_version=$(echo "$current_version" | cut -d. -f3)
+              new_patch_version=$((patch_version + 1))-0
+              new_version=$(echo "$current_version" | awk -F. -v OFS=. -v patch="$new_patch_version" '{$3=patch; print}')
+              jq --arg new_version "$new_version" '.version |= $new_version' donnuts-shop/package.json > temp.json && mv temp.json donnuts-shop/package.json
+              echo "::set-output name=version::$new_version"
+            fi
+
+      - name: Search for 'Food' tag and add '##[Unreleased]'
+        run: |
+          # Find the line number where 'Food' tag is located in the file
+          line_number=$(grep -n 'donnuts-shop' CHANGELOG.md | cut -d':' -f1)
+          
+          if [ -n "$line_number" ]; then
+          # Increment line number by 1 to add '##[Unreleased]' below the 'donnuts-shop' tag
+            new_line_number=$((line_number + 1))
+            sed -i "${new_line_number}i## [Unreleased] \n" CHANGELOG.md
+           # git add CHANGELOG.md
+           # git commit -m "Bump"
+          else
+            echo "Tag 'donnuts-shop' not found in CHANGELOG.md"
+          fi
+
+      - name: Push changes
+        run: |
+          git config --global user.email "actions@github.com"
+          git config --global user.name "GitHub Actions"
+          git push origin HEAD:${{ steps.create_branch.outputs.branch_name }}
+
+      - name: Create Pull Request
+        id: cpr
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.PAT_TOKEN }}
+          commit-message: Update report
+          committer: GitHub <noreply@github.com>
+          author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
+          signoff: false
+          base: main
+          branch: ${{ steps.create_branch.outputs.branch_name }}
+          delete-branch: true
+          title: 'Bump version to ${{ steps.bump_version_step.outputs.version }}'
+          body: |
+            Update report
+            - 'Bump version to ${{ steps.bump_version_step.outputs.version }}'
+          labels: |
+            bump-release-version
+            automated pr
+          draft: false
+
+

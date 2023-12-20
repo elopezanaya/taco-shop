@@ -101,16 +101,16 @@ jobs:
       - name: Search for 'Food' tag and add '##[Unreleased]'
         run: |
           # Find the line number where 'Food' tag is located in the file
-          line_number=$(grep -n 'Food' CHANGELOG.md | cut -d':' -f1)
+          line_number=$(grep -n 'taco-shop' CHANGELOG.md | cut -d':' -f1)
           
           if [ -n "$line_number" ]; then
-          # Increment line number by 1 to add '##[Unreleased]' below the 'Food' tag
+          # Increment line number by 1 to add '##[Unreleased]' below the 'taco-shop' tag
             new_line_number=$((line_number + 1))
             sed -i "${new_line_number}i## [Unreleased] \n" CHANGELOG.md
            # git add CHANGELOG.md
            # git commit -m "Bump"
           else
-            echo "Tag 'Food' not found in CHANGELOG.md"
+            echo "Tag 'taco-shop' not found in CHANGELOG.md"
           fi
 
       - name: Push changes
