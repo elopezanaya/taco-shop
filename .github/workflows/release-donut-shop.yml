@@ -60,7 +60,7 @@ jobs:
       - name: Update Changelog
         run: |
           version="${{ steps.bump_version_step.outputs.version }}"
-          sed -i "0,/\\[Unreleased\\]/{s/\\[Unreleased\\]/[${version}]/2}" CHANGELOG.md
+          awk -v version="$version" 'BEGIN { count = 0 } /\[Unreleased\]/ { count++ } count == 2 { gsub(/\[Unreleased\]/, "["${version}"]", $0); print } count != 2' CHANGELOG.md > temp && mv temp CHANGELOG.md
 
 
       - name: Commit Changes
