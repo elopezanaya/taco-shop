@@ -40,9 +40,8 @@ jobs:
 
       - name: Update Changelog
         run: |
-          # Perform actions to update the changelog with new version
-          # Example: (Replace this with your logic)
-          sed -i 's/\[Unreleased\]/[${{ steps.bump_version_step.outputs.version }}]/g' CHANGELOG.md
+          version="${{ steps.bump_version_step.outputs.version }}"
+          sed -i "0,/\[Unreleased\]/s/\[Unreleased\]/[${version}]/" CHANGELOG.md
 
       - name: Commit Changes
         run: |
