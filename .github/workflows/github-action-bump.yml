@@ -23,7 +23,7 @@ jobs:
 
       - name: Create and checkout new branch
         run: |
-          branch_name="bump-$(date +'%m-%d-%Y')-branch"
+          branch_name="bump-$(date +'%m-%d-%Y-%H-%M-%S')-branch"
           git checkout -b "$branch_name"
           git push --set-upstream origin "$branch_name"
 
