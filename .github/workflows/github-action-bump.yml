@@ -51,8 +51,8 @@ jobs:
             echo "::set-output name=version::$new_version"
           else
             current_version=$(jq -r '.version' taco-shop/package.json)
-            major_version=$(echo "$current_version" | cut -d. -f1)
-            new_version="$((major_version + 1)).0.0"
+            major_version=$(echo "$current_version" | cut -d. -f2)
+            new_version="1.$((major_version + 1)).0"
             jq --arg new_version "$new_version" '.version |= $new_version' taco-shop/package.json > temp.json && mv temp.json taco-shop/package.json
             echo "::set-output name=version::$new_version"
           fi
@@ -82,14 +82,21 @@ jobs:
       - name: Bump Version in package.json
         id: bump_version_step_minor
         run: |
-          current_version_B=$(jq -r '.version' taco-shop/package.json)
-          major_version_B=$(echo "$current_version_B" | cut -d. -f1)
-          minor_version_B=$(echo "$current_version_B" | cut -d. -f2)
-          new_version_minor="$major_version_B.$((minor_version + 1)).0"
-          jq --arg new_version_minor "$new_version_minor" '.version |= $new_version_minor' taco-shop/package.json > temp.json && mv temp.json taco-shop/package.json
-          echo "::set-output name=version::$new_version_minor"
-         # git add taco-shop/package.json
-         # git commit -m "Bump version to ${new_version_minor}"
+            if [ "${{ github.event.inputs.name }}" == "Patch" ]; then
+              current_version=$(jq -r '.version' taco-shop/package.json)
+              patch_version=$(echo "$current_version" | cut -d. -f3)
+              new_patch_version=$((patch_version + 1))-0
+              new_version=$(echo "$current_version" | awk -F. -v OFS=. -v patch="$new_patch_version" '{$3=patch; print}')
+              jq --arg new_version "$new_version" '.version |= $new_version' taco-shop/package.json > temp.json && mv temp.json taco-shop/package.json
+              echo "::set-output name=version::$new_version"
+            else
+              current_version=$(jq -r '.version' taco-shop/package.json)
+              patch_version=$(echo "$current_version" | cut -d. -f3)
+              new_patch_version=$((patch_version + 1))-0
+              new_version=$(echo "$current_version" | awk -F. -v OFS=. -v patch="$new_patch_version" '{$3=patch; print}')
+              jq --arg new_version "$new_version" '.version |= $new_version' taco-shop/package.json > temp.json && mv temp.json taco-shop/package.json
+              echo "::set-output name=version::$new_version"
+            fi
 
       - name: Search for 'Food' tag and add '##[Unreleased]'
         run: |
