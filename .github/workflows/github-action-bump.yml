@@ -113,7 +113,7 @@ jobs:
             Update report
             - 'Bump version to ${{ steps.bump_version_step.outputs.version }}'
           labels: |
-            report
+            bump-release-version
             automated pr
           draft: false
 
