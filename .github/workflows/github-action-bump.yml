@@ -52,8 +52,15 @@ jobs:
         run: |
           git tag -a "v-${version}" -m "Version ${version}"
 
-      - name: Push branch and tag
+      # Add or update this step in your workflow YAML file
+
+      - name: Push branch
         run: |
-          git push --set-upstream origin bump-$(date +"%m-%d-%Y")-branch
-          git push origin "v-${version}"
+          git remote add origin_with_token "https://github.com/${{ github.repository }}"
+          git push --set-upstream origin_with_token bump-$(date +"%m-%d-%Y")-branch
+        env:  
+          TOKEN: ${{ secrets.PAT_TOKEN }}
+
+
+
 
