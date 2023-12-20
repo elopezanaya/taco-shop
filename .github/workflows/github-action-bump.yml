@@ -94,13 +94,4 @@ jobs:
           git config --global user.name "GitHub Actions"
           git push origin HEAD:${{ github.ref }}
 
-      - name: Create Pull Request
-        uses: octokit/request-action@v2.x
-        with:
-          route: POST /repos/${{ github.repository }}/pulls
-          GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
-          body: '{"title": "Automated PR", "head": "${{ github.ref }}", "base": "main"}'
-          headers: |
-            Accept: application/vnd.github.v3+json
-            Content-Type: application/json
 
