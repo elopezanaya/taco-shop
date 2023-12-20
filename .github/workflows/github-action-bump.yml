@@ -1,0 +1,55 @@
+name: Manual Release Workflow
+
+on:
+  workflow_dispatch: # This event allows manual triggering
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout main and pull upstream master
+        uses: actions/checkout@v2
+        with:
+          ref: main
+
+      - name: Git Pull from Upstream Master
+        run: |
+          git remote add upstream <upstream_repository_url>
+          git pull upstream master
+
+      - name: Create and checkout new branch
+        run: git checkout -b bump-$(date +"%m-%d-%Y")-branch
+
+
+      - name: Install jq
+        run: sudo apt-get install jq
+
+      - name: Bump Version in package.json
+        id: bump_version_step
+        run: |
+          current_version=$(jq -r '.version' package.json)
+          new_version=$(echo $current_version | awk -F. '{$NF = $NF + 1;} 1' | sed 's/ /./g')
+          jq --arg new_version "$new_version" '.version |= $new_version' package.json > temp.json && mv temp.json package.json
+          echo "::set-output name=version::$new_version"
+
+      - name: Update Changelog
+        run: |
+          # Perform actions to update the changelog with new version
+          # Example: (Replace this with your logic)
+          sed -i 's/\[Unreleased\]/[${{ steps.bump_version.outputs.version }}]/g' CHANGELOG.md
+
+      - name: Commit Changes
+        run: |
+          git add package.json CHANGELOG.md
+          git commit -m "Bump version to ${{ steps.bump_version.outputs.version }}"
+
+      - name: Create Tag
+        run: |
+          git tag -a "v-${{ steps.bump_version.outputs.version }}" -m "Version ${{ steps.bump_version.outputs.version }}"
+
+      - name: Push Changes and Tag to Upstream
+        run: |
+          git push upstream "bump-$(date +"%m-%d-%Y")-branch"
+          git push upstream "v-${{ steps.bump_version.outputs.version }}"
+
