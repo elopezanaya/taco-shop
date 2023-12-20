@@ -98,13 +98,13 @@ jobs:
               echo "::set-output name=version::$new_version"
             fi
 
-      - name: Search for 'Food' tag and add '##[Unreleased]'
+      - name: Search for 'donut-shop' tag and add '##[Unreleased]'
         run: |
           # Find the line number where 'Food' tag is located in the file
-          line_number=$(grep -n 'donnuts-shop' CHANGELOG.md | cut -d':' -f1)
+          line_number=$(grep -n 'donut-shop' CHANGELOG.md | cut -d':' -f1)
           
           if [ -n "$line_number" ]; then
-          # Increment line number by 1 to add '##[Unreleased]' below the 'donnuts-shop' tag
+          # Increment line number by 1 to add '##[Unreleased]' below the 'donut-shop' tag
             new_line_number=$((line_number + 1))
             sed -i "${new_line_number}i## [Unreleased] \n" CHANGELOG.md
            # git add CHANGELOG.md
