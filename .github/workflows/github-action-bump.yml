@@ -5,10 +5,7 @@ on:
     inputs:
       name:
         type: choice
-        description: Choose a type of release to build.\n
-          Minor version, increments second digit.\n
-          Patch version, increments third digit\n
-          Major version, increment first digit\n
+        description: Choose a type of release to build.
         options:
           - Minor
           - Patch
