@@ -108,7 +108,7 @@ jobs:
           base: main
           branch: ${{ steps.create_branch.outputs.branch_name }}
           delete-branch: true
-          title: 'Bump version to ${{new_version}}'
+          title: 'Bump version to ${{version}}'
           body: |
             Update report
             - Updated with *today's* date
