@@ -22,9 +22,11 @@ jobs:
           git pull origin main
 
       - name: Create and checkout new branch
+        id: create_branch
         run: |
           branch_name="bump-$(date +'%m-%d-%Y-%H-%M-%S')-branch"
           git checkout -b "$branch_name"
+          echo "::set-output name=branch_name::$branch_name"
           git push --set-upstream origin "$branch_name"
 
       - name: Install jq
