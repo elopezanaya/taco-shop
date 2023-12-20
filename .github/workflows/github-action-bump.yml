@@ -6,8 +6,12 @@ on:
       name:
         type: choice
         description: Choose a type of release to build.
+          Minor version, increments second digit.
+          Patch version, increments third digit
+          Major version, increment first digit
         options:
           - Minor
+          - Patch
           - Major
 
 permissions: write-all
