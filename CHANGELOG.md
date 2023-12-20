@@ -8,9 +8,7 @@ All notable changes to this project will be documented in this file.
 - Predict lottery numbers
 ### Fixed
 - whatevs
-
-## [13.0.0] 
-
+  
 ## [12.0.0]
 
 ### Added
