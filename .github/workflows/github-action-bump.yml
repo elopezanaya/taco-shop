@@ -1,7 +1,7 @@
 name: Manual Release Workflow
 
 on:
-  workflow_dispatch: # This event allows manual triggering
+  workflow_dispatch:
     inputs:
       name:
         type: choice
@@ -12,7 +12,7 @@ on:
       message:
         required: true
       environment:
-      type: environment
+        type: environment
           
 
 permissions: write-all
