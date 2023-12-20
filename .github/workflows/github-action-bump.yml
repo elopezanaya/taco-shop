@@ -42,7 +42,7 @@ jobs:
       - name: Bump Version in package.json
         id: bump_version_step
         run: |
-          if [ "${{ github.event.inputs.name }}" == "patch" ]; then
+          if [ "${{ github.event.inputs.name }}" == "Patch" ]; then
             current_version=$(jq -r '.version' taco-shop/package.json)
             patch_version=$(echo "$current_version" | cut -d. -f3)
             new_patch_version=$((patch_version + 1))
