@@ -97,6 +97,7 @@ jobs:
       - name: Create Pull Request
         uses: octokit/request-action@v2.x
         with:
+          GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
           route: POST /repos/${{ github.repository }}/pulls
           headers: |
             Authorization: ${{ secrets.PAT_TOKEN  }}
