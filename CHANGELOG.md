@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file.
 
 # Food
 ## [Unreleased] 
+
+## [1.2.0] 
 ### Added
 - Predict lottery numbers
 ### Fixed
