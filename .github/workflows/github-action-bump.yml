@@ -9,11 +9,6 @@ on:
         options:
           - Major Release
           - Minor Release
-      message:
-        required: true
-      environment:
-        type: environment
-          
 
 permissions: write-all
 
