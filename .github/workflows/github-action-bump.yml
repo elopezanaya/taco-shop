@@ -2,6 +2,18 @@ name: Manual Release Workflow
 
 on:
   workflow_dispatch: # This event allows manual triggering
+    inputs:
+      name:
+        type: choice
+        description: Choose a type of release to build.
+        options:
+          - Major Release
+          - Minor Release
+      message:
+        required: true
+      environment:
+      type: environment
+          
 
 permissions: write-all
 
