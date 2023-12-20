@@ -15,8 +15,7 @@ jobs:
 
       - name: Git Pull from Upstream Master
         run: |
-          git remote add upstream https://github.com/elopezanaya/taco-shop.git
-          git pull upstream main
+          git pull main
 
       - name: Create and checkout new branch
         run: git checkout -b bump-$(date +"%m-%d-%Y")-branch
@@ -45,6 +44,7 @@ jobs:
           git config --global user.name "Don Taquero"
           git add taco-shop/package.json CHANGELOG.md
           git commit -m "Bump version to ${{ steps.bump_version.outputs.version }}"
+    
 
       - name: Create Tag
         run: |
@@ -52,6 +52,5 @@ jobs:
 
       - name: Push Changes and Tag to Upstream
         run: |
-          git push upstream "bump-$(date +"%m-%d-%Y")-branch"
           git push upstream "v-${{ steps.bump_version.outputs.version }}"
 
