@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-# Food
+# taco-shop
 ## [Unreleased] 
 ### Added
 - Predict lottery numbers
@@ -18,5 +18,5 @@ All notable changes to this project will be documented in this file.
 - Added `--no-verify` option to `git revert` command.
 
 
-# Drinks
+# donut-shop
 ## [Unreleased]
