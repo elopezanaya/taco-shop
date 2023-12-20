@@ -28,16 +28,10 @@ jobs:
           git push --set-upstream origin "$branch_name"
 
 
-      - name: Install jq
-        run: sudo apt-get install jq
-
-      - name: Bump Version in package.json
-        id: bump_version_step
+      - name: Bump package.json version and save the value
         run: |
-          current_version=$(jq -r '.version' taco-shop/package.json)
-          new_version=$(echo $current_version | awk -F. '{$NF = $NF + 1;} 1' | sed 's/ /./g')
-          jq --arg new_version "$new_version" '.version |= $new_version' taco-shop/package.json package.json > temp.json && mv temp.json taco-shop/package.json
-          echo "::set-output name=version::$new_version"
+          version=$(node -p "require('./package.json').version")
+          echo "Version: $version"
 
       - name: Update Changelog
         run: |
