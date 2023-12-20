@@ -13,9 +13,11 @@ jobs:
         with:
           ref: main
 
-      - name: Git Pull from Upstream Master
+      - name: Git Pull main branch
         run: |
-          git pull main
+          git fetch origin main
+          git checkout main
+          git pull origin main
 
       - name: Create and checkout new branch
         run: git checkout -b bump-$(date +"%m-%d-%Y")-branch
@@ -46,11 +48,11 @@ jobs:
           git commit -m "Bump version to ${{ steps.bump_version.outputs.version }}"
     
 
-      - name: Create Tag
+      - name: Create tag
         run: |
-          git tag -a "v-${{ steps.bump_version.outputs.version }}" -m "Version ${{ steps.bump_version.outputs.version }}"
+          git tag -a "v-${version}" -m "Version ${version}"
 
-      - name: Push Changes and Tag to Upstream
-        run: |
-          git push upstream "v-${{ steps.bump_version.outputs.version }}"
+
+      - name: Push tag
+        run: git push origin "v-${version}"
 
