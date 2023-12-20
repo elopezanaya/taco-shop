@@ -54,7 +54,5 @@ jobs:
 
 
       - name: Push tag
-        run: |
-        git push --set-upstream origin bump-$(date +"%m-%d-%Y")-branch
-        git push origin "v-${version}"
+        run: git push origin "v-${version}"
 
