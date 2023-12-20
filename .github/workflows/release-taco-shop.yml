@@ -1,4 +1,4 @@
-name: Manual Release Workflow
+name: Release Taco Shop
 
 on:
   workflow_dispatch:
