@@ -94,7 +94,7 @@ jobs:
           git config --global user.name "GitHub Actions"
           git add .
           git commit -m "Auto-commit changes"
-          git push origin HEAD:${{ github.ref }}
+          git push
 
       - name: Create Pull Request
         uses: octokit/request-action@v2.x
