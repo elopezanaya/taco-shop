@@ -59,7 +59,7 @@ jobs:
           git remote add origin_with_token "https://github.com/${{ github.repository }}"
           git push --set-upstream origin_with_token bump-$(date +"%m-%d-%Y")-branch
         env:  
-          TOKEN: ${{ secrets.PAT_TOKEN }}
+          TOKEN: ${{ secrets.OAUTH_POC }}
 
 
 
