@@ -9,7 +9,6 @@ on:
         options:
           - Minor
           - Patch
-          - Major
 
 permissions: write-all
 
