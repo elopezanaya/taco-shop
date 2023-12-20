@@ -41,7 +41,7 @@ jobs:
 
       - name: Commit Changes
         run: |
-          git add package.json CHANGELOG.md
+          git add taco-shop/package.json CHANGELOG.md
           git commit -m "Bump version to ${{ steps.bump_version.outputs.version }}"
 
       - name: Create Tag
