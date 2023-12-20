@@ -3,7 +3,7 @@
 All notable changes to this project will be documented in this file.
 
 # Food
-##[Unreleased]
+##[8.0.0]
 ##[7.0.0]
 ##[6.0.0]
 ##[5.0.0]
