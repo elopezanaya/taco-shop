@@ -3,7 +3,7 @@
 All notable changes to this project will be documented in this file.
 
 # Food
-## [Unreleased]
+## [1.0.0]
 ### Added
 - Added `--no-verify` option to `git commit` command.
 - Added `--no-verify` option to `git merge` command.
