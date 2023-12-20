@@ -27,11 +27,16 @@ jobs:
           git checkout -b "$branch_name"
           git push --set-upstream origin "$branch_name"
 
+      - name: Install jq
+        run: sudo apt-get install jq
 
-      - name: Bump package.json version and save the value
+      - name: Bump Version in package.json
+        id: bump_version_step
         run: |
-          version=$(node -p "require('./package.json').version")
-          echo "Version: $version"
+          current_version=$(jq -r '.version' taco-shop/package.json)
+          new_version=$(echo $current_version | awk -F. '{$NF = $NF + 1;} 1' | sed 's/ /./g')
+          jq --arg new_version "$new_version" '.version |= $new_version' taco-shop/package.json > temp.json && mv temp.json taco-shop/package.json
+          echo "::set-output name=version::$new_version"
 
       - name: Update Changelog
         run: |
@@ -44,18 +49,14 @@ jobs:
           git config --global user.email "senorTaquero@tacos.com"
           git config --global user.name "Don Taquero"
           git add taco-shop/package.json CHANGELOG.md
-          git commit -m "Bump version to ${{ steps.bump_version.outputs.version }}"
-    
+          git commit -m "Bump version to ${{ steps.bump_version_step.outputs.version }}"
 
       - name: Create tag
         run: |
+          version="${{ steps.bump_version_step.outputs.version }}"
           git tag -a "v-${version}" -m "Version ${version}"
 
-      # Add or update this step in your workflow YAML file
-
-      - name: Push branch
-        run: git push origin "v-${version}"
-
-
-
-
+      - name: Push tag
+        run: |
+          version="${{ steps.bump_version_step.outputs.version }}"
+          git push origin "v-${version}"
