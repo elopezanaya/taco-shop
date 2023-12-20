@@ -72,8 +72,8 @@ jobs:
           new_version_minor="$major_version_B.$((minor_version + 1)).0"
           jq --arg new_version_minor "$new_version_minor" '.version |= $new_version_minor' taco-shop/package.json > temp.json && mv temp.json taco-shop/package.json
           echo "::set-output name=version::$new_version_minor"
-          git add taco-shop/package.json
-          git commit -m "Bump version to ${new_version_minor}"
+         # git add taco-shop/package.json
+         # git commit -m "Bump version to ${new_version_minor}"
 
       - name: Search for 'Food' tag and add '##[Unreleased]'
         run: |
@@ -84,8 +84,8 @@ jobs:
           # Increment line number by 1 to add '##[Unreleased]' below the 'Food' tag
             new_line_number=$((line_number + 1))
             sed -i "${new_line_number}i## [Unreleased] \n" CHANGELOG.md
-            git add CHANGELOG.md
-            git commit -m "Bump"
+           # git add CHANGELOG.md
+           # git commit -m "Bump"
           else
             echo "Tag 'Food' not found in CHANGELOG.md"
           fi
