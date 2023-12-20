@@ -105,6 +105,7 @@ jobs:
           committer: GitHub <noreply@github.com>
           author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
           signoff: false
+          base: main
           branch: ${{ steps.create_branch.outputs.branch_name }}
           delete-branch: true
           title: '[Example] Update report'
