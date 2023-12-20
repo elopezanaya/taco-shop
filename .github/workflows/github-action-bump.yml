@@ -42,11 +42,20 @@ jobs:
       - name: Bump Version in package.json
         id: bump_version_step
         run: |
-          current_version=$(jq -r '.version' taco-shop/package.json)
-          major_version=$(echo "$current_version" | cut -d. -f1)
-          new_version="$((major_version + 1)).0.0"
-          jq --arg new_version "$new_version" '.version |= $new_version' taco-shop/package.json > temp.json && mv temp.json taco-shop/package.json
-          echo "::set-output name=version::$new_version"
+          if [ "${{ github.event.inputs.name }}" == "patch" ]; then
+            current_version=$(jq -r '.version' taco-shop/package.json)
+            patch_version=$(echo "$current_version" | cut -d. -f3)
+            new_patch_version=$((patch_version + 1))
+            new_version=$(echo "$current_version" | awk -F. -v OFS=. -v patch="$new_patch_version" '{$3=patch; print}')
+            jq --arg new_version "$new_version" '.version |= $new_version' taco-shop/package.json > temp.json && mv temp.json taco-shop/package.json
+            echo "::set-output name=version::$new_version"
+          else
+            current_version=$(jq -r '.version' taco-shop/package.json)
+            major_version=$(echo "$current_version" | cut -d. -f1)
+            new_version="$((major_version + 1)).0.0"
+            jq --arg new_version "$new_version" '.version |= $new_version' taco-shop/package.json > temp.json && mv temp.json taco-shop/package.json
+            echo "::set-output name=version::$new_version"
+          fi
 
       - name: Update Changelog
         run: |
