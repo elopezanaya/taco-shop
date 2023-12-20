@@ -105,7 +105,7 @@ jobs:
               "head": "${{ github.ref }}",
               "base": "main"
             }
-              headers: |
-          Accept: application/vnd.github.v3+json
-          Content-Type: application/json
+          headers: |
+            Accept: application/vnd.github.v3+json
+            Content-Type: application/json
 
