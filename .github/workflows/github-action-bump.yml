@@ -103,6 +103,6 @@ jobs:
             {
               "title": "Automated PR",
               "head": "${{ github.ref }}",
-              "base": "main"  # Change 'main' to your base branch
+              "base": "main"
             }
 
