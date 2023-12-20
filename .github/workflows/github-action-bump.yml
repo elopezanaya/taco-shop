@@ -3,6 +3,8 @@ name: Manual Release Workflow
 on:
   workflow_dispatch: # This event allows manual triggering
 
+permissions: write-all
+
 jobs:
   release:
     runs-on: ubuntu-latest
