@@ -34,7 +34,8 @@ jobs:
         id: bump_version_step
         run: |
           current_version=$(jq -r '.version' taco-shop/package.json)
-          new_version=$(echo $current_version | awk -F. '{$NF = $NF + 1;} 1' | sed 's/ /./g')
+          major_version=$(echo "$current_version" | cut -d. -f1)
+          new_version="$((major_version + 1)).0.0"
           jq --arg new_version "$new_version" '.version |= $new_version' taco-shop/package.json > temp.json && mv temp.json taco-shop/package.json
           echo "::set-output name=version::$new_version"
 
@@ -63,10 +64,10 @@ jobs:
       - name: Bump Version in package.json
         id: bump_version_step_minor
         run: |
-          current_version=$(jq -r '.version' taco-shop/package.json)
-          major_version=$(echo "$current_version" | cut -d. -f1)
-          minor_version=$(echo "$current_version" | cut -d. -f2)
-          new_version_minor="$major_version.$((minor_version + 1)).0"
+          current_version_B=$(jq -r '.version' taco-shop/package.json)
+          major_version_B=$(echo "$current_version_B" | cut -d. -f1)
+          minor_version_B=$(echo "$current_version_B" | cut -d. -f2)
+          new_version_minor="$major_version_B.$((minor_version + 1)).0"
           jq --arg new_version_minor "$new_version_minor" '.version |= $new_version_minor' taco-shop/package.json > temp.json && mv temp.json taco-shop/package.json
           echo "::set-output name=version::$new_version_minor"
           git add taco-shop/package.json
@@ -81,9 +82,29 @@ jobs:
           # Increment line number by 1 to add '##[Unreleased]' below the 'Food' tag
             new_line_number=$((line_number + 1))
             sed -i "${new_line_number}i##[Unreleased]" CHANGELOG.md
+            git add CHANGELOG.md
+            git commit -m "Bump"
           else
             echo "Tag 'Food' not found in CHANGELOG.md"
           fi
 
+      - name: Push changes
+        run: |
+          git config --global user.email "actions@github.com"
+          git config --global user.name "GitHub Actions"
+          git add .
+          git commit -m "Auto-commit changes"
+          git push origin HEAD:${{ github.ref }}
 
-
+      - name: Create Pull Request
+        uses: octokit/request-action@v2.x
+        with:
+          route: POST /repos/${{ github.repository }}/pulls
+          headers: |
+            Authorization: ${{ secrets.OAUTH_POC }}
+          body: |
+            {
+              "title": "Automated PR",
+              "head": "${{ github.ref }}",
+              "base": "main"  # Change 'main' to your base branch
+            }
