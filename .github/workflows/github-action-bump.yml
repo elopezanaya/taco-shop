@@ -99,7 +99,7 @@ jobs:
         with:
           route: POST /repos/${{ github.repository }}/pulls
           headers: |
-            Authorization: ${{ secrets.GITHUB_TOKEN  }}
+            Authorization: ${{ secrets.PAT_TOKEN  }}
           body: |
             {
               "title": "Automated PR",
