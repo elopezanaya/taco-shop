@@ -81,7 +81,7 @@ jobs:
           if [ -n "$line_number" ]; then
           # Increment line number by 1 to add '##[Unreleased]' below the 'Food' tag
             new_line_number=$((line_number + 1))
-            sed -i "${new_line_number}i##[Unreleased]" CHANGELOG.md
+            sed -i "${new_line_number}i## [Unreleased] \n" CHANGELOG.md
             git add CHANGELOG.md
             git commit -m "Bump"
           else
