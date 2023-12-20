@@ -15,7 +15,7 @@ jobs:
 
       - name: Git Pull from Upstream Master
         run: |
-          git remote add upstream <upstream_repository_url>
+          git remote add upstream https://github.com/elopezanaya/taco-shop.git
           git pull upstream master
 
       - name: Create and checkout new branch
