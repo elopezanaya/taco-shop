@@ -135,7 +135,7 @@ jobs:
           base: main
           branch: ${{ steps.create_branch.outputs.branch_name }}
           delete-branch: true
-          title: 'Bump version to ${{ steps.bump_version_step.outputs.version }}'
+          title: 'Bump version donuts-shop to ${{ steps.bump_version_step.outputs.version }}'
           body: |
             Update report
             - 'Bump version to ${{ steps.bump_version_step.outputs.version }}'
