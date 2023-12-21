@@ -53,8 +53,9 @@ jobs:
             echo "::set-output name=version::$new_version"
           else
             current_version=$(jq -r '.version' donnuts-shop/package.json)
-            major_version=$(echo "$current_version" | cut -d. -f2)
-            new_version="1.$((major_version + 1)).0"
+            major_version=$(echo "$current_version" | cut -d. -f1)
+            minor_version=$(echo "$current_version" | cut -d. -f2)
+            new_version="$((major_version)).$((minor_version + 1)).0"
             jq --arg new_version "$new_version" '.version |= $new_version' donnuts-shop/package.json > temp.json && mv temp.json donnuts-shop/package.json
             echo "::set-output name=version::$new_version"
           fi
