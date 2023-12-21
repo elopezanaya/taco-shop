@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file.
 
 # taco-shop
 ## [Unreleased] 
+
+## [1.1.2] 
 ### Added
 - something new here
 - something else new here
