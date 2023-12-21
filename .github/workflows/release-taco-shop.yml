@@ -7,8 +7,8 @@ on:
         type: choice
         description: Choose a type of release to build.
         options:
-          - Minor
           - Patch
+          - Minor
 
 permissions: write-all
 
