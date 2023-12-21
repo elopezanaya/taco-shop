@@ -79,7 +79,7 @@ jobs:
       - name: Push tag
         run: |
           version="${{ steps.bump_version_step.outputs.version }}"
-          git push origin "v-${version}"
+          git push origin "t-v${version}"
   
       - name: Bump Version in package.json
         id: bump_version_step_minor
