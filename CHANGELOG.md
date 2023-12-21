@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-# taco-shop
+# shop taco
 ## [Unreleased] 
 ### Added
 - something new here
@@ -30,7 +30,7 @@ All notable changes to this project will be documented in this file.
 - Added `--no-verify` option to `git revert` command.
 
 
-# donut-shop
+# shop donut
 ## [Unreleased] 
 
 ## [0.4.0] 
