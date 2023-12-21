@@ -45,7 +45,7 @@ jobs:
           if [ "${{ github.event.inputs.name }}" == "Patch" ]; then
             current_version=$(jq -r '.version' donnuts-shop/package.json)
             patch_version=$(echo "$current_version" | cut -d. -f3)
-            patch_version_final=$(echo "$current_version" | cut -d- -f1)
+            patch_version_final=$(echo "$patch_version" | cut -d- -f1)
             new_patch_version=$((patch_version_final))
             new_version=$(echo "$current_version" | awk -F. -v OFS=. -v patch="$new_patch_version" '{$3=patch; print}')
             jq --arg new_version "$new_version" '.version |= $new_version' donnuts-shop/package.json > temp.json && mv temp.json donnuts-shop/package.json
