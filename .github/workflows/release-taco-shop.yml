@@ -140,6 +140,7 @@ jobs:
           labels: |
             bump-release-version
             automated pr
+            taco-shop
           draft: false
 
 

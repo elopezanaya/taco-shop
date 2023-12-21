@@ -142,6 +142,7 @@ jobs:
           labels: |
             bump-release-version
             automated pr
+            donut-shop
           draft: false
 
 
