@@ -19,7 +19,9 @@ All notable changes to this project will be documented in this file.
 
 
 # donut-shop
-## [Unreleased]
+## [Unreleased] 
+
+## [0.1.0]
 ### Added
 - something new here
 - something else new here
