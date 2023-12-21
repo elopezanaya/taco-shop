@@ -33,6 +33,8 @@ All notable changes to this project will be documented in this file.
 # donut-shop
 ## [Unreleased] 
 
+## [0.3.1] 
+
 ## [0.3.0] 
 
 ## [0.2.1] 
