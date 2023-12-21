@@ -68,8 +68,8 @@ jobs:
 
       - name: Commit Changes
         run: |
-          git config --global user.email "senorTaquero@tacos.com"
-          git config --global user.name "Don Taquero"
+          git config --global user.email "noreply@github.com"
+          git config --global user.name "noreply@github.com"
           git add donnuts-shop/package.json CHANGELOG.md
           git commit -m "Bump version to ${{ steps.bump_version_step.outputs.version }}"
 
