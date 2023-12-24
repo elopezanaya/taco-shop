@@ -10,10 +10,9 @@ jobs:
       - uses: actions/checkout@v2
       # this is the new step using the ms-teams-notification action
       - name: Notify dedicated teams channel
-        uses: jdcargile/ms-teams-notification@v1.3
+        id: notify
+        uses: thechetantalwar/teams-notify@v2        
         with:
-          github-token: ${{ github.token }} # this will use the runner's token.
-          ms-teams-webhook-uri: ${{ secrets.MS_TEAM }}
-          notification-summary: "ELOPEZANAYA : <a href='https://github.com/elopezanaya/taco-shop/pull/${{ github.event.number }}'>NEW PR #{{ github.event.number }}</a>"
-          notification-color: 17a2b8
-          timezone: America/Denver
+          teams_webhook_url: ${{ secrets.MS_TEAM }}
+          message: "Github Action Build Number ${{ github.run_number }} Completed for ${{ github.repository }} and the outcome is  ${{ needs.build.result }}."
+
