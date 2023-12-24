@@ -14,6 +14,6 @@ jobs:
         with:
           github-token: ${{ github.token }} # this will use the runner's token.
           ms-teams-webhook-uri: ${{ secrets.MS_TEAM }}
-          notification-summary: "ELOPEZANAYA : New PR"
+          notification-summary: "ELOPEZANAYA : New PR  ${{ github.event.number }}"
           notification-color: 17a2b8
           timezone: America/Denver
