@@ -1,4 +1,5 @@
-on: [push]
+on:   workflow_dispatch
+permissions: write-all
 
 jobs:
   hello_world_job:
