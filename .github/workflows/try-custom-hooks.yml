@@ -122,7 +122,7 @@ jobs:
           git push origin HEAD:${{ steps.create_branch.outputs.branch_name }}
           
       - name: Create Pull Request
-        id: cpr
+        id: sendPR
         uses: elopezanaya/cit-gh-actions-create-pull-request@beta
         with:
           title: 'taco shop - pull request'
@@ -141,7 +141,6 @@ jobs:
           echo "The PR number is ${{ steps.sendPR.outputs.pull_request_number }}"
           echo "The PR url is ${{ steps.sendPR.outputs.pull_request_url }}"
           echo "The PR ID is ${{ steps.sendPR.outputs.pull_request_id }}"
-            - name: Get funky
             
       - name: Merge
         uses: elopezanaya/cit-gh-actions-merge-pull-request@beta
