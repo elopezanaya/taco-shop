@@ -1,0 +1,159 @@
+name: 🤞🤳🤳🤳 Custom Hooks Test 🧠🧠🧠
+
+on:
+  workflow_dispatch:
+    inputs:
+      name:
+        type: choice
+        description: Choose a type of release to build.
+        options:
+          - Patch
+          - Minor
+
+permissions: write-all
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout main and pull upstream master
+        uses: actions/checkout@v2
+        with:
+          ref: main
+
+      - name: Git Pull main branch
+        run: |
+          git fetch origin main
+          git checkout main
+          git pull origin main
+
+      - name: Create and checkout new branch
+        id: create_branch
+        run: |
+          branch_name="tacoshop-bump-$(date +'%m-%d-%Y-%H-%M-%S')"
+          git checkout -b "$branch_name"
+          echo "::set-output name=branch_name::$branch_name"
+          git push --set-upstream origin "$branch_name"
+
+      - name: Install jq
+        run: sudo apt-get install jq
+
+      - name: Bump Version in package.json
+        id: bump_version_step
+        run: |
+          if [ "${{ github.event.inputs.name }}" == "Patch" ]; then
+            current_version=$(jq -r '.version' taco-shop/package.json)
+            patch_version=$(echo "$current_version" | cut -d. -f3)
+            patch_version_final=$(echo "$patch_version" | cut -d- -f1)
+            new_patch_version=$((patch_version_final))
+            new_version=$(echo "$current_version" | awk -F. -v OFS=. -v patch="$new_patch_version" '{$3=patch; print}')
+            jq --arg new_version "$new_version" '.version |= $new_version' taco-shop/package.json > temp.json && mv temp.json taco-shop/package.json
+            echo "::set-output name=version::$new_version"
+          else
+            current_version=$(jq -r '.version' taco-shop/package.json)
+            major_version=$(echo "$current_version" | cut -d. -f1)
+            minor_version=$(echo "$current_version" | cut -d. -f2)
+            new_version="$((major_version)).$((minor_version + 1)).0"
+            jq --arg new_version "$new_version" '.version |= $new_version' taco-shop/package.json > temp.json && mv temp.json taco-shop/package.json
+            echo "::set-output name=version::$new_version"
+          fi
+
+      - name: Update Changelog
+        run: |
+          version="${{ steps.bump_version_step.outputs.version }}"
+          sed -i "0,/\[Unreleased\]/s/\[Unreleased\]/[${version}]/" CHANGELOG.md
+
+      - name: Commit Changes
+        run: |
+          git config --global user.email "noreply@github.com"
+          git config --global user.name "noreply@github.com"
+          git add taco-shop/package.json CHANGELOG.md
+          git commit -m "Bump version to ${{ steps.bump_version_step.outputs.version }}"
+
+      - name: Create tag
+        run: |
+          version="${{ steps.bump_version_step.outputs.version }}"
+          git tag -a "t-v${version}" -m "Version ${version}"
+
+      - name: Push tag
+        run: |
+          version="${{ steps.bump_version_step.outputs.version }}"
+          git push origin "t-v${version}"
+  
+      - name: Bump Version in package.json
+        id: bump_version_step_minor
+        run: |
+            if [ "${{ github.event.inputs.name }}" == "Patch" ]; then
+              current_version=$(jq -r '.version' taco-shop/package.json)
+              patch_version=$(echo "$current_version" | cut -d. -f3)
+              new_patch_version=$((patch_version + 1))-0
+              new_version=$(echo "$current_version" | awk -F. -v OFS=. -v patch="$new_patch_version" '{$3=patch; print}')
+              jq --arg new_version "$new_version" '.version |= $new_version' taco-shop/package.json > temp.json && mv temp.json taco-shop/package.json
+              echo "::set-output name=version::$new_version"
+            else
+              current_version=$(jq -r '.version' taco-shop/package.json)
+              patch_version=$(echo "$current_version" | cut -d. -f3)
+              new_patch_version=$((patch_version + 1))-0
+              new_version=$(echo "$current_version" | awk -F. -v OFS=. -v patch="$new_patch_version" '{$3=patch; print}')
+              jq --arg new_version "$new_version" '.version |= $new_version' taco-shop/package.json > temp.json && mv temp.json taco-shop/package.json
+              echo "::set-output name=version::$new_version"
+            fi
+
+      - name: Search for 'Food' tag and add '##[Unreleased]'
+        run: |
+          # Find the line number where 'Food' tag is located in the file
+          line_number=$(grep -n 'shop taco' CHANGELOG.md | cut -d':' -f1)
+          
+          if [ -n "$line_number" ]; then
+          # Increment line number by 1 to add '##[Unreleased]' below the 'taco-shop' tag
+            new_line_number=$((line_number + 1))
+            sed -i "${new_line_number}i## [Unreleased] \n" CHANGELOG.md
+           # git add CHANGELOG.md
+           # git commit -m "Bump"
+          else
+            echo "Tag 'shop taco' not found in CHANGELOG.md"
+          fi
+
+      - name: Push changes
+        run: |
+          git config --global user.email "actions@github.com"
+          git config --global user.name "GitHub Actions"
+          git push origin HEAD:${{ steps.create_branch.outputs.branch_name }}
+          
+      - name: Create Pull Request
+        id: cpr
+        uses: elopezanaya/cit-gh-actions-create-pull-request@beta
+        with:
+          title: 'taco shop - pull request'
+          body: 'Taco shop is a great place to eat tacos'
+          head: ${{ steps.create_branch.outputs.branch_name }}
+          base: 'main'
+          labels: 'bug, enhancement'
+          assignees: 'elopezanaya'
+          owner: 'elopezanaya'
+          repo: 'taco-shop'
+          token: ${{ secrets.GITHUB_TOKEN }}
+          author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
+          auto-merge: 'true'
+      - name : PrintOutput
+        run: | 
+          echo "The PR number is ${{ steps.sendPR.outputs.pull_request_number }}"
+          echo "The PR url is ${{ steps.sendPR.outputs.pull_request_url }}"
+          echo "The PR ID is ${{ steps.sendPR.outputs.pull_request_id }}"
+            - name: Get funky
+            
+      - name: Merge
+        uses: elopezanaya/cit-gh-actions-merge-pull-request@beta
+        id: mergePR
+        with:
+          owner: 'elopezanaya'
+          repo: 'taco-shop'
+          token: ${{ secrets.GITHUB_TOKEN }}
+          author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
+          pull_number: ${{ steps.sendPR.outputs.pull_request_id }}
+          commit_message : "Merged using custom merge action"
+      - name : PrintOutput
+        run: | 
+          echo "SHA ${{ steps.mergePR.outputs.sha }}"
+          echo "status :  ${{ steps.mergePR.outputs.merged }}"
