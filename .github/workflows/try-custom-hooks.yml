@@ -136,6 +136,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
           auto-merge: 'true'
+
       - name : PrintOutput
         run: | 
           echo "The PR number is ${{ steps.sendPR.outputs.pull_request_number }}"
@@ -150,7 +151,7 @@ jobs:
           repo: 'taco-shop'
           token: ${{ secrets.GITHUB_TOKEN }}
           author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
-          pull_number: ${{ steps.sendPR.outputs.pull_request_id }}
+          pull_number: ${{ steps.sendPR.outputs.pull_request_number }}
           commit_message : "Merged using custom merge action"
       - name : PrintOutput
         run: | 
