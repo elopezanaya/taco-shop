@@ -3,7 +3,7 @@
 All notable changes to this project will be documented in this file.
 
 # shop taco
-## [Unreleased] 
+## [1.1.7] 
 
 ## [1.1.6] 
 
