@@ -125,7 +125,7 @@ jobs:
           
       - name: Create Pull Request
         id: sendPR
-        uses: elopezanaya/cit-gh-actions-create-pull-request@beta
+        uses: elopezanaya/cit-gh-actions-create-pull-request@alpha
         with:
           title: 'taco shop - pull request'
           body: 'Taco shop is a great place to eat tacos'
@@ -146,7 +146,7 @@ jobs:
           echo "The PR ID is ${{ steps.sendPR.outputs.pull_request_id }}"
             
       - name: Merge
-        uses: elopezanaya/cit-gh-actions-merge-pull-request@beta
+        uses: elopezanaya/cit-gh-actions-merge-pull-request@alpha
         id: mergePR
         with:
           owner: 'elopezanaya'
